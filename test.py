@@ -1,11 +1,8 @@
 import re
 
-code = '''"""This is a multiline comment
-or a docstring"""
-print("Hello there")
+code = ''';
+  some code;
 '''
 
-multi_line_comments = re.findall(r'^\""".*?"""', code, flags=re.DOTALL)
-
-print(multi_line_comments)
-# Output: ['"""This is a multiline comment\nor a docstring"""']
+comments = re.findall(r"^;" , code, flags=re.MULTILINE)
+print(comments)

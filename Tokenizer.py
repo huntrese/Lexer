@@ -2,11 +2,13 @@ import re
 
 Tokens = [
     [r"^\s+", "WHITESPACE"],
+    [r"^\n+", "NEWLINE"],
     # [r'^\""".*?"""', "COMMENT"],
     [r"^\d+", "NUMBER"],
     [r'^\"(?:[^"\\]|\\.)*"', "STRING"],
     [r"^\'(?:[^'\\]|\\.)*'", "STRING"],
-    [r"^\#.*$", "COMMENT"]
+    [r"^\#.*$", "COMMENT"],
+    [r"^;" , ";"]
 ]
 
 class Tokenizer:
@@ -29,7 +31,7 @@ class Tokenizer:
             if len(match) == 0:
                 continue
 
-            if literal_type in ["WHITESPACE", "COMMENT"]:
+            if literal_type in ["WHITESPACE", "COMMENT", "NEWLINE"]:
                 self._coursor += len(match[0])
                 return self.getNextToken()
             

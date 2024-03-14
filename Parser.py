@@ -12,9 +12,44 @@ class Parser:
     def Program(self):
         return {
             "type": "Program",
-            "body": self.Literal()
+            "body": self.StatementList()
         }
     
+    # StatementList : Statement | StatementList Statement
+    def StatementList(self):
+        statementList = [self.Statement()]
+        
+        while self._lookahead != None:
+            statementList.append(self.Statement())
+        
+        return statementList
+
+    # Statement : ExpressionStatement ;
+    def Statement(self):
+        return self.ExpressionStatement()
+    
+    # ExpressionStatement : Expression ';' ;
+    def ExpressionStatement(self):
+        expression = self.Expression()
+
+        self._eat(";")
+        expression_statement_dict = {
+            "type": "ExpressionStatement",
+        }
+        expression_statement_dict.update(expression)
+        return expression_statement_dict
+    
+    # Expression : Literal ;
+    def Expression(self):
+        return self.Literal()
+    
+    # Literal : NumericLiteral | StringLiteral ;
+    def Literal(self):
+        # print(self._lookahead)
+        match self._lookahead["type"]:
+            case "STRING": return self.StringLiteral()
+            case "NUMBER": return self.NumericLiteral()
+
     def NumericLiteral(self):
         token = self._eat("NUMBER")
         return {
@@ -29,12 +64,6 @@ class Parser:
             "value": token["value"]
         }
     
-    def Literal(self):
-        match self._lookahead["type"]:
-            case "STRING": return self.StringLiteral()
-            case "NUMBER": return self.NumericLiteral()
-      
-    
     def _eat(self, tokenType):
         token = self._lookahead
 
@@ -42,10 +71,10 @@ class Parser:
             raise SyntaxError(f"Unexpected end of input, expected {tokenType}.") 
     
         if token["type"] != tokenType:
+            print(self._string[self._tokenizer._coursor], self._tokenizer._coursor, self._lookahead)
             val = token["value"]
             raise SyntaxError(f"Unexpected token {val}, expected {tokenType}.")
         
         self._lookahead = self._tokenizer.getNextToken()
 
         return token
-
