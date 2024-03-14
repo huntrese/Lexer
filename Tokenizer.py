@@ -1,4 +1,13 @@
-class Tokenizer:    
+import re
+
+Tokens = {
+    r"^\d+": "NUMBER",
+    r'^\"(?:[^"\\]|\\.)*"': "STRING",
+    r"^\'(?:[^'\\]|\\.)*'": "STRING"
+}
+
+class Tokenizer:   
+     
     def __init__(self, string):
         self._string = string
         self._coursor = 0
@@ -6,39 +15,18 @@ class Tokenizer:
     def hasMoreTokens(self):
         return self._coursor < len(self._string)
     
-    def isEOF(self):
-        return self._coursor == len(self._string)
-    
     def getNextToken(self):
         if not self.hasMoreTokens():
             return None
         
         curr_string = self._string[self._coursor:]
 
-        if curr_string.isdigit():
-            number = ""
-            while self.hasMoreTokens() and curr_string[self._coursor].isdigit():
-                number += curr_string[self._coursor]
-                self._coursor += 1
-
-            return {
-                "type": "NUMBER",
-                "value": int(number)
-            }
-        
-        if curr_string[0] == '"':
-            string = ""
-            while True:
-                print(string)
-                self._coursor += 1
-                if self.isEOF() or curr_string[self._coursor] == '"':
-                    break
-                string += curr_string[self._coursor]
-
-            return {
-                "type": "STRING",
-                "value": str(string)
-            }
-
-
-
+        for regex, literal_type in Tokens.items():
+            match = re.findall(regex, curr_string)
+            
+            if len(match) != 0:
+                self._coursor += len(match[0])
+                return {
+                    "type": literal_type,
+                    "value": match[0]
+                }
