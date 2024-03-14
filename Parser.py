@@ -3,7 +3,6 @@ from Tokenizer import *
 class Parser:
     def parse(self, string):
         self._string = string
-        print(self._string)
         self._tokenizer = Tokenizer(string)
 
         self._lookahead = self._tokenizer.getNextToken()
@@ -16,7 +15,7 @@ class Parser:
             "body": self.StatementList()
         }
     
-    # StatementList : Statement | StatementList Statement
+    # StatementList : Statement | StatementList Statement ;
     def StatementList(self):
         statementList = []
         
@@ -32,13 +31,7 @@ class Parser:
     # ExpressionStatement : Expression ';' ;
     def ExpressionStatement(self):
         expression = self.Expression()
-        print(expression)
         self._eat(";")
-        # expression_statement_dict = {
-        #     "type": "ExpressionStatement",
-        #     "expression": expression
-        # }
-        # expression_statement_dict.update(expression)
         return {
             "type": "ExpressionStatement",
             "expression": expression
@@ -50,7 +43,6 @@ class Parser:
     
     # Literal : NumericLiteral | StringLiteral ;
     def Literal(self):
-        # print(self._lookahead)
         match self._lookahead["type"]:
             case "STRING": return self.StringLiteral()
             case "NUMBER": return self.NumericLiteral()
@@ -80,12 +72,6 @@ class Parser:
             val = token["value"]
             raise SyntaxError(f"Unexpected token {val}, expected {tokenType}.")
         
-        print(self._string[self._tokenizer._coursor], self._tokenizer._coursor, self._lookahead)
         self._lookahead = self._tokenizer.getNextToken()
-        # at the last step goes out of bounds
-        try:
-            print(self._string[self._tokenizer._coursor], self._tokenizer._coursor, self._lookahead)
-        except:
-            pass
 
         return token
