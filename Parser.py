@@ -1,4 +1,3 @@
-import json
 from Tokenizer import *
 
 class Parser:

@@ -1,13 +1,15 @@
 import re
 
-Tokens = {
-    r"^\d+": "NUMBER",
-    r'^\"(?:[^"\\]|\\.)*"': "STRING",
-    r"^\'(?:[^'\\]|\\.)*'": "STRING"
-}
+Tokens = [
+    [r"^\s+", "WHITESPACE"],
+    # [r'^\""".*?"""', "COMMENT"],
+    [r"^\d+", "NUMBER"],
+    [r'^\"(?:[^"\\]|\\.)*"', "STRING"],
+    [r"^\'(?:[^'\\]|\\.)*'", "STRING"],
+    [r"^\#.*$", "COMMENT"]
+]
 
-class Tokenizer:   
-     
+class Tokenizer:
     def __init__(self, string):
         self._string = string
         self._coursor = 0
@@ -21,12 +23,18 @@ class Tokenizer:
         
         curr_string = self._string[self._coursor:]
 
-        for regex, literal_type in Tokens.items():
-            match = re.findall(regex, curr_string)
+        for regex, literal_type in Tokens:
+            match = re.findall(regex, curr_string, flags=re.MULTILINE)
             
-            if len(match) != 0:
+            if len(match) == 0:
+                continue
+
+            if literal_type in ["WHITESPACE", "COMMENT"]:
                 self._coursor += len(match[0])
-                return {
-                    "type": literal_type,
-                    "value": match[0]
-                }
+                return self.getNextToken()
+            
+            self._coursor += len(match[0])
+            return {
+                "type": literal_type,
+                "value": match[0]
+            }

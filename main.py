@@ -1,5 +1,11 @@
 from Parser import *
+import json
 parser = Parser()
-result = parser.parse("'42'")
+code = '''
+# This is comment
+# This is comment
+'HI'
+'''
+result = parser.parse(code)
 
 print(json.dumps(result, indent=2)) 
