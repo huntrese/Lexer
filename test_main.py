@@ -20,7 +20,7 @@ class TokenizerTests(unittest.TestCase):
 class ParserTests(unittest.TestCase):
     def test_numeric_literal(self):
         parser = Parser()
-        program = parser.parse("123")
+        program = parser.parse("123;")
         self.assertEqual(program, {
             'type': 'Program',
             'body': {
