@@ -3,8 +3,9 @@ import json
 parser = Parser()
 code = '''
 # This is comment
-
-42; 10;
+# Another comment
+42; 
+'Hi';
 '''
 result = parser.parse(code)
 
